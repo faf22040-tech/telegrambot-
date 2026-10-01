@@ -919,18 +919,16 @@ def health():
     return "OK"
 
 
-def start_bot_thread():
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(run_bot())
+def start_flask():
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, use_reloader=False)
 
 
 if __name__ == "__main__":
     if not BOT_TOKEN:
         raise SystemExit("❌ BOT_TOKEN жоқ! Environment-те орнатыңыз.")
 
-    bot_thread = threading.Thread(target=start_bot_thread, daemon=True)
-    bot_thread.start()
+    flask_thread = threading.Thread(target=start_flask, daemon=True)
+    flask_thread.start()
 
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    asyncio.run(run_bot())
